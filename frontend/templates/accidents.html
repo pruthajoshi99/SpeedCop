@@ -1,0 +1,849 @@
+<!DOCTYPE html>
+{% load static %}
+{% load leaflet_tags%}
+<html lang="en">
+
+<head>
+    {% leaflet_js %}
+    {% leaflet_css %}
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta name="description" content="">
+    <meta name="author" content="">
+
+    <title>Accidents</title>
+    <link rel="shortcut icon" type="image/png" href="{% static 'img/logo-square.png' %}"/>
+
+    <!-- Custom fonts for this template-->
+    <link href="{% static 'vendor/fontawesome-free/css/all.min.css' %}" rel="stylesheet" type="text/css">
+    <link href="https://fonts.googleapis.com/css?family=Nunito:200,200i,300,300i,400,400i,600,600i,700,700i,800,800i,900,900i"
+          rel="stylesheet">
+
+    <!-- Custom styles for this template -->
+    <link href="{% static 'css/sb-admin-2.min.css' %}" rel="stylesheet">
+    <link rel="stylesheet" href="http://cdn.leafletjs.com/leaflet/v0.7.7/leaflet.css"/>
+    <script src="http://cdn.leafletjs.com/leaflet/v0.7.7/leaflet.js"></script>
+    <script src="leaflet-heat.js"></script>
+    <style type="text/css">
+	 	html, body, #map{
+	 		height: 100%;
+	 		padding: 0;
+	 		margin: 0;
+	 	}
+
+    </style>
+
+</head>
+
+<body id="page-top" onload="init()">
+
+<!-- Page Wrapper -->
+<div id="wrapper">
+
+    <!-- Sidebar -->
+    <ul class="navbar-nav bg-gradient-primary sidebar sidebar-dark accordion" id="accordionSidebar">
+
+        <!-- Sidebar - Brand -->
+        <a class="sidebar-brand d-flex align-items-center justify-content-center" href="index.html">
+            <div class="sidebar-brand-icon rotate-n-15">
+                <!--          <i class="fas fa-laugh-wink"></i>-->
+
+            </div>
+            <img src="{% static 'img/dashboard-logo.png' %}">
+            <div class="sidebar-brand-text mx-3">SpeedCop</div>
+
+        </a>
+
+        <!-- Divider -->
+        <hr class="sidebar-divider my-0">
+
+        <li class="nav-item active">
+            <a class="nav-link" href="dashboard">
+                <i class="fas fa-fw fa-tachometer-alt"></i>
+                <span>Dashboard</span></a>
+        </li>
+        <!-- Nav Item - Pages Collapse Menu -->
+        <li class="nav-item">
+            <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapsePages"
+               aria-expanded="true" aria-controls="collapsePages">
+                <i class="fas fa-fw fa-chart-area"></i>
+                <span>Statistics</span>
+            </a>
+            <div id="collapsePages" class="collapse" aria-labelledby="headingPages" data-parent="#accordionSidebar">
+                <div class="bg-white py-2 collapse-inner rounded">
+                    <h6 class="collapse-header">Sort by:</h6>
+                    <a class="collapse-item" href="accidents">By Accidents</a>
+                    <a class="collapse-item" href="violations">By Violations</a>
+
+                </div>
+            </div>
+        </li>
+
+
+        <!-- Divider -->
+        <hr class="sidebar-divider d-none d-md-block">
+
+        <!-- Sidebar Toggler (Sidebar) -->
+        <div class="text-center d-none d-md-inline">
+            <button class="rounded-circle border-0" id="sidebarToggle"></button>
+        </div>
+
+    </ul>
+    <!-- End of Sidebar -->
+
+    <!-- Content Wrapper -->
+    <div id="content-wrapper" class="d-flex flex-column">
+
+        <!-- Main Content -->
+        <div id="content">
+
+            <!-- Topbar -->
+            <nav class="navbar navbar-expand navbar-light bg-white topbar mb-4 static-top shadow">
+
+                <!-- Sidebar Toggle (Topbar) -->
+                <form class="form-inline">
+                    <button id="sidebarToggleTop" class="btn btn-link d-md-none rounded-circle mr-3">
+                        <i class="fa fa-bars"></i>
+                    </button>
+                </form>
+
+                <!-- Topbar Search -->
+                <form class="d-none d-sm-inline-block form-inline mr-auto ml-md-3 my-2 my-md-0 mw-100 navbar-search">
+                    <div class="input-group">
+                        <!--              <input type="text" class="form-control bg-light border-0 small" placeholder="Search for..." aria-label="Search" aria-describedby="basic-addon2">-->
+                        <h1 style="text-align:center; margin-top:8px" class="h3 mb-2 text-gray-800">Accidents</h1>
+
+                    </div>
+                </form>
+
+                <!-- Topbar Navbar -->
+                <ul class="navbar-nav ml-auto">
+
+
+                    <div class="topbar-divider d-none d-sm-block"></div>
+
+                    <!-- Nav Item - User Information -->
+                    <li class="nav-item dropdown no-arrow">
+                        <a class="nav-link dropdown-toggle" href="#" id="userDropdown" role="button"
+                           data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                            <span class="mr-2 d-none d-lg-inline text-gray-600 small">RTO-Pune</span>
+                            <!--                <img class="img-profile rounded-circle" src="https://source.unsplash.com/QAB-WJcbgJk/60x60">-->
+                            <!--                <svg xmlns="http://www.w3.org/2000/svg" x="0px" y="0px" width="48" height="48" viewBox="0 0 172 172" style=" fill:#000000;"><defs><linearGradient x1="66.33187" y1="47.7348" x2="106.94903" y2="126.75923" gradientUnits="userSpaceOnUse" id="color-1_0jVkvmv2FhKB_gr1"><stop offset="0" stop-color="#007ad9"></stop><stop offset="1" stop-color="#2aa4f4"></stop></linearGradient></defs><g fill="none" fill-rule="nonzero" stroke="none" stroke-width="1" stroke-linecap="butt" stroke-linejoin="miter" stroke-miterlimit="10" stroke-dasharray="" stroke-dashoffset="0" font-family="none" font-weight="none" font-size="none" text-anchor="none" style="mix-blend-mode: normal"><path d="M0,172v-172h172v172z" fill="none"></path><path d="M86,86.86c-0.47496,0 -0.86,-0.38504 -0.86,-0.86v0c0,-0.47496 0.38504,-0.86 0.86,-0.86v0c0.47496,0 0.86,0.38504 0.86,0.86v0c0,0.47496 -0.38504,0.86 -0.86,0.86z" fill="#cccccc"></path><g fill="url(#color-1_0jVkvmv2FhKB_gr1)"><path d="M129.71667,86c0,24.14253 -19.57414,43.71667 -43.71667,43.71667c-24.14253,0 -43.71667,-19.57414 -43.71667,-43.71667c0,-24.14253 19.57414,-43.71667 43.71667,-43.71667c24.14253,0 43.71667,19.57414 43.71667,43.71667z"></path></g></g></svg>-->
+                            <svg xmlns="http://www.w3.org/2000/svg" x="0px" y="0px" width="30" height="30"
+                                 viewBox="0 0 172 172" style=" fill:#000000;">
+                                <g transform="">
+                                    <g fill="none" fill-rule="nonzero" stroke="none" stroke-width="1"
+                                       stroke-linecap="butt" stroke-linejoin="miter" stroke-miterlimit="10"
+                                       stroke-dasharray="" stroke-dashoffset="0" font-family="none" font-weight="none"
+                                       font-size="none" text-anchor="none" style="mix-blend-mode: normal">
+                                        <path d="M0,172v-172h172v172z" fill="none"></path>
+                                        <path d="M86,86.86c-0.47496,0 -0.86,-0.38504 -0.86,-0.86v0c0,-0.47496 0.38504,-0.86 0.86,-0.86v0c0.47496,0 0.86,0.38504 0.86,0.86v0c0,0.47496 -0.38504,0.86 -0.86,0.86z"
+                                              fill="#cccccc"></path>
+                                        <g>
+                                            <path d="M115.64133,142.588v-26.94667h21.43877c-1.49285,16.52909 -16.43208,25.35142 -19.39621,26.94667z"
+                                                  fill="#c8d1db"></path>
+                                            <path d="M133.96507,118.336c-2.28508,11.25293 -11.30143,18.07582 -15.62907,20.77049v-20.77049h15.62907M139.89333,112.94667h-26.94667v32.336h5.38933c0,0 21.55733,-10.31518 21.55733,-32.336z"
+                                                  fill="#66798f"></path>
+                                            <path d="M115.64133,99.47333v-26.94667h21.43877c-1.49285,16.52909 -16.43208,25.35142 -19.39621,26.94667z"
+                                                  fill="#c8d1db"></path>
+                                            <path d="M133.96507,75.22133c-2.28508,11.25293 -11.30143,18.07582 -15.62907,20.77049v-20.77049h15.62907M139.89333,69.832h-26.94667v32.336h5.38933c0,0 21.55733,-10.31518 21.55733,-32.336z"
+                                                  fill="#66798f"></path>
+                                            <path d="M115.64133,56.35867v-26.94667h21.43877c-1.49285,16.52909 -16.43208,25.35142 -19.39621,26.94667z"
+                                                  fill="#c8d1db"></path>
+                                            <path d="M133.96507,32.10667c-2.28508,11.25293 -11.30143,18.07582 -15.62907,20.77049v-20.77049h15.62907M139.89333,26.71733h-26.94667v32.336h5.38933c0,0 21.55733,-10.31518 21.55733,-32.336z"
+                                                  fill="#66798f"></path>
+                                            <path d="M54.3215,142.588c-2.96413,-1.60602 -17.89798,-10.47686 -19.4016,-26.94667h21.43877v26.94667z"
+                                                  fill="#c8d1db"></path>
+                                            <path d="M53.664,118.336v20.7651c-4.3438,-2.70006 -13.34399,-9.52295 -15.62907,-20.7651h15.62907M59.05333,112.94667h-26.94667c0,22.02082 21.55733,32.336 21.55733,32.336h5.38933v-32.336z"
+                                                  fill="#66798f"></path>
+                                            <path d="M54.3215,99.47333c-2.96413,-1.60602 -17.89798,-10.47686 -19.4016,-26.94667h21.43877v26.94667z"
+                                                  fill="#c8d1db"></path>
+                                            <path d="M53.664,75.22133v20.7651c-4.3438,-2.70006 -13.34399,-9.52295 -15.62907,-20.7651h15.62907M59.05333,69.832h-26.94667c0,22.02082 21.55733,32.336 21.55733,32.336h5.38933v-32.336z"
+                                                  fill="#66798f"></path>
+                                            <g>
+                                                <path d="M54.3215,56.35867c-2.96413,-1.60602 -17.89798,-10.47686 -19.4016,-26.94667h21.43877v26.94667z"
+                                                      fill="#c8d1db"></path>
+                                                <path d="M53.664,32.10667v20.7651c-4.3438,-2.70006 -13.34399,-9.52295 -15.62907,-20.7651h15.62907M59.05333,26.71733h-26.94667c0,22.02082 21.55733,32.336 21.55733,32.336h5.38933v-32.336z"
+                                                      fill="#66798f"></path>
+                                            </g>
+                                            <g>
+                                                <path d="M50.96933,158.756v-126.64933c0,-4.45698 3.62702,-8.084 8.084,-8.084h5.10909l0.80301,-1.1102c4.3438,-5.9606 12.40086,-9.66846 21.03457,-9.66846c8.63371,0 16.69077,3.70786 21.02918,9.66846l0.8084,1.1102h5.10909c4.45698,0 8.084,3.62702 8.084,8.084v126.64933z"
+                                                      fill="#c8d1db"></path>
+                                                <path d="M86,15.93867c7.78759,0 15.00929,3.2821 18.85189,8.55826l1.61141,2.22041h2.74317h3.7402c2.96952,0 5.38933,2.41981 5.38933,5.38933v123.95467h-64.672v-123.95467c0,-2.96952 2.41981,-5.38933 5.38933,-5.38933h3.7402h2.74317l1.6168,-2.22041c3.83721,-5.27616 11.05891,-8.55826 18.8465,-8.55826M86,10.54933c-9.94871,0 -18.53931,4.35997 -23.20647,10.77867h-3.7402c-5.95521,0 -10.77867,4.82345 -10.77867,10.77867v129.344h75.45067v-129.344c0,-5.95521 -4.82345,-10.77867 -10.77867,-10.77867h-3.7402c-4.66716,-6.4187 -13.25776,-10.77867 -23.20647,-10.77867z"
+                                                      fill="#66798f"></path>
+                                            </g>
+                                            <g>
+                                                <path d="M86,29.412c-7.44112,0 -13.47333,6.03222 -13.47333,13.47333c0,7.44112 6.03222,13.47333 13.47333,13.47333c7.44112,0 13.47333,-6.03222 13.47333,-13.47333c0,-7.44112 -6.03222,-13.47333 -13.47333,-13.47333z"
+                                                      fill="#f78f8f"></path>
+                                                <path d="M86,32.10667c5.94443,0 10.77867,4.83423 10.77867,10.77867c0,5.94443 -4.83423,10.77867 -10.77867,10.77867c-5.94443,0 -10.77867,-4.83423 -10.77867,-10.77867c0,-5.94443 4.83423,-10.77867 10.77867,-10.77867M86,26.71733c-8.93013,0 -16.168,7.23787 -16.168,16.168c0,8.93013 7.23787,16.168 16.168,16.168c8.93013,0 16.168,-7.23787 16.168,-16.168c0,-8.93013 -7.23787,-16.168 -16.168,-16.168z"
+                                                      fill="#c74343"></path>
+                                            </g>
+                                            <g>
+                                                <path d="M86,72.52667c-7.44112,0 -13.47333,6.03222 -13.47333,13.47333c0,7.44112 6.03222,13.47333 13.47333,13.47333c7.44112,0 13.47333,-6.03222 13.47333,-13.47333c0,-7.44112 -6.03222,-13.47333 -13.47333,-13.47333z"
+                                                      fill="#f5ce85"></path>
+                                                <path d="M86,75.22133c5.94443,0 10.77867,4.83423 10.77867,10.77867c0,5.94443 -4.83423,10.77867 -10.77867,10.77867c-5.94443,0 -10.77867,-4.83423 -10.77867,-10.77867c0,-5.94443 4.83423,-10.77867 10.77867,-10.77867M86,69.832c-8.93013,0 -16.168,7.23787 -16.168,16.168c0,8.93013 7.23787,16.168 16.168,16.168c8.93013,0 16.168,-7.23787 16.168,-16.168c0,-8.93013 -7.23787,-16.168 -16.168,-16.168z"
+                                                      fill="#967a44"></path>
+                                            </g>
+                                            <g>
+                                                <path d="M86,115.64133c-7.44112,0 -13.47333,6.03222 -13.47333,13.47333c0,7.44112 6.03222,13.47333 13.47333,13.47333c7.44112,0 13.47333,-6.03222 13.47333,-13.47333c0,-7.44112 -6.03222,-13.47333 -13.47333,-13.47333z"
+                                                      fill="#bae0bd"></path>
+                                                <path d="M86,118.336c5.94443,0 10.77867,4.83423 10.77867,10.77867c0,5.94443 -4.83423,10.77867 -10.77867,10.77867c-5.94443,0 -10.77867,-4.83423 -10.77867,-10.77867c0,-5.94443 4.83423,-10.77867 10.77867,-10.77867M86,112.94667c-8.93013,0 -16.168,7.23787 -16.168,16.168c0,8.93013 7.23787,16.168 16.168,16.168c8.93013,0 16.168,-7.23787 16.168,-16.168c0,-8.93013 -7.23787,-16.168 -16.168,-16.168z"
+                                                      fill="#5e9c76"></path>
+                                            </g>
+                                        </g>
+                                    </g>
+                                </g>
+                            </svg>
+                        </a>
+                        <!-- Dropdown - User Information -->
+                        <div class="dropdown-menu dropdown-menu-right shadow animated--grow-in"
+                             aria-labelledby="userDropdown">
+                            <a onclick="logout()" class="dropdown-item" href="#" data-toggle="modal"
+                               data-target="#logoutModal">
+                                <i class="fas fa-sign-out-alt fa-sm fa-fw mr-2 text-gray-400"></i>
+                                Logout
+                            </a>
+
+                        </div>
+                    </li>
+
+                </ul>
+
+            </nav>
+            <!-- End of Topbar -->
+
+            <!-- Begin Page Content -->
+            <div class="container-fluid">
+
+                <!-- Page Heading -->
+                <!-- <h1 class="h3 mb-2 text-gray-800">Charts</h1> -->
+                <!-- <div class="card mb-4"> -->
+                <!-- <div class="card-header py-3">
+                    <h6 class="m-0 font-weight-bold text-primary">Dropdown - No Arrow</h6>
+                </div> -->
+                <form method="POST" enctype="multipart/form-data" name='accidents_filter'>
+                    {% csrf_token %}
+                    <div style="color:black;" class="dropdown mb-4">
+                        From:&nbsp;&nbsp;
+                        <input class="btn btn-primary" type="date" id="timestamp_from" name='timestamp_from'>
+                        &nbsp;&nbsp;&nbsp;&nbsp;
+                        To:&nbsp;&nbsp;
+                        <input class="btn btn-primary" type="date" id="timestamp_till" name='timestamp_till'>
+                        <br><br>
+                        Area:&nbsp;&nbsp;
+                        <!--                      Select required state-->
+                        <select style="width: 200px" class="btn btn-primary dropdown-toggle" id='area' name='area'
+                        >
+                            <option value='All'>All</option>
+                            {% for area in areas %}
+
+                            <option value={{ area }}>{{ area }}</option>
+                            {% endfor %}
+                        </select>
+                        &nbsp;&nbsp;&nbsp;&nbsp;
+                        Group By:&nbsp;&nbsp;
+                        <input type="radio" id="months" name="time_filter" value="months">&nbsp;Months&nbsp;&nbsp;
+                        <input type="radio" id="years" name="time_filter" value="years">&nbsp;Years&nbsp;&nbsp;
+                        <br><br>
+                    </div>
+
+                    <center>
+                        <button href="#" class="btn btn-info btn-icon-split" type="submit">
+								<span class="icon text-white-50">
+								  <i class="fas fa-flag"></i>
+								</span>
+                            <p style="margin-left: 8px;margin-right: 8px;margin-top: 4px;margin-bottom: 4px;">
+                                Apply Filters
+                            </p>
+                        </button>
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                        <button type="button" onclick="removeFilters()" class="btn btn-danger btn-icon-split">
+								<span class="icon text-white-50">
+								  <i class="fas fa-trash"></i>
+								</span>
+                            <p style="margin-left: 8px;margin-right: 8px;margin-top: 4px;margin-bottom: 4px;">
+                                Remove Filters
+                            </p>
+                        </button>
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                        <button onclick="heatmap({{latlngs}})" href="#" class="btn btn-success btn-icon-split"
+                                name="map" type="button">
+                            </span>
+                            <p style="margin-left: 16px;margin-right: 16px;margin-top: 8px;margin-bottom: 8px;">
+                                Map
+                            </p>
+                        </button>
+                    </center>
+                    <br>
+                    <div class="my-2"></div>
+                </form>            <!-- <div class="card-body"> -->
+
+                <!-- </div>
+            </div> -->
+
+            </div>
+            <!--				Modal for heatmap -->
+            <div id="modal" class="modal" align="center">
+                <div class="modal-dialog" style="height: 10S%;width:10S%">
+                    <div class="modal-content" style="height: 100%;">
+                        <div class="modal-header">
+                            <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+                            <h4 class="modal-title">Map</h4>
+                        </div>
+                        <div class="modal-body" style="height:100%;">
+                            {% leaflet_map "map-canvas" %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- Content Row -->
+            <div class="row">
+
+                <div class="col-xl-12 col-lg-12">
+
+                    <!-- Area Chart -->
+                    <div class="card shadow mb-4" id='area_chart'>
+                        <div class="card-header py-3">
+                            <h6 class="m-0 font-weight-bold text-primary">Number of accidents Vs Time</h6>
+                        </div>
+                        <div class="card-body">
+                            <div class="chart-area">
+                                <canvas id="myAreaChart"></canvas>
+                            </div>
+                            <hr>
+                        </div>
+                    </div>
+
+                    <div class="card shadow mb-4" id='bar_chart'>
+                        <div class="card-header py-3">
+                            <h6 class="m-0 font-weight-bold text-primary">Number of Accidents</h6>
+                        </div>
+                        <div class="card-body">
+                            <div class="chart-bar">
+                                <canvas id="myBarChart"></canvas>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+
+                <!-- Donut Chart -->
+                <!-- <div class="col-xl-4 col-lg-5">
+                    <div class="card shadow mb-4"> -->
+                <!-- Card Header - Dropdown -->
+                <!-- <div class="card-header py-3">
+                    <h6 class="m-0 font-weight-bold text-primary">Donut Chart</h6>
+                </div> -->
+                <!-- Card Body -->
+                <!-- <div class="card-body">
+                    <div class="chart-pie pt-4">
+                        <canvas id="myPieChart"></canvas>
+                    </div>
+                    <hr>
+                    Styling for the donut chart can be found in the <code>/js/demo/chart-pie-demo.js</code> file.
+                </div>
+            </div>
+        </div>
+    </div> -->
+
+            </div>
+            <!-- /.container-fluid -->
+
+        </div>
+        <!-- End of Main Content -->
+
+        <!-- Footer -->
+
+        <!-- End of Footer -->
+
+    </div>
+    <!-- End of Content Wrapper -->
+
+</div>
+<!-- End of Page Wrapper -->
+
+<!-- Scroll to Top Button-->
+<a class="scroll-to-top rounded" href="#page-top">
+    <i class="fas fa-angle-up"></i>
+</a>
+
+<!-- Logout Modal-->
+<div class="modal fade" id="logoutModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+     aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">Ready to Leave?</h5>
+                <button class="close" type="button" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">×</span>
+                </button>
+            </div>
+            <div class="modal-body">Select "Logout" below if you are ready to end your current session.</div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" type="button" data-dismiss="modal">Cancel</button>
+                <a class="btn btn-primary" href="login.html">Logout</a>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- <div id="modal" class="modal">
+    <div class="modal-dialog" style="height: 45%;">
+      <div class="modal-content" style="height: 100%;">
+        <div class="modal-header">
+          <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+          <h4 class="modal-title">Map</h4>
+        </div>
+        <div class="modal-body" style="height:100%;">
+          {% leaflet_map "map-canvas" %}
+        </div>
+      </div>
+    </div>
+  </div> -->
+<!--	<div id="map"></map>-->
+<!-- Bootstrap core JavaScript-->
+<script src="{% static 'vendor/jquery/jquery.min.js' %}"></script>
+<script src="{% static 'vendor/bootstrap/js/bootstrap.bundle.min.js' %}"></script>
+
+<!-- Core plu{% static 'gin JavaScript-->
+<script src="{% static 'vendor/jquery-easing/jquery.easing.min.js' %}"></script>
+
+<!-- Custom s{% static 'cripts for all pages-->
+<script src="{% static 'js/sb-admin-2.min.js' %}"></script>
+
+<!-- Page lev{% static 'el plugins -->
+<script src="{% static 'vendor/chart.js/Chart.min.js' %}"></script>
+
+<!-- Page lev{% static 'el custom scripts -->
+<script src="{% static 'js/demo/chart-area-demo.js' %}"></script>
+<script src="{% static 'js/demo/chart-pie-demo.js' %}"></script>
+<script src="{% static 'js/demo/chart-bar-demo.js' %}"></script>
+<script src="{% static 'js/demo/leaflet-heatmap.js' %}"></script>
+
+<script type="text/javascript">
+		function logout() {
+			document.cookie = 'token=; Path=/; Expires=Thu, 01 Jan 1970 00:00:01 GMT;';
+			window.location = location.origin + '/login'
+		}
+		Array.prototype.contains = function(v) {
+			for (var i = 0; i < this.length; i++) {
+				if (this[i] === v) return true;
+			}
+			return false;
+		};
+
+
+		labels_chart = []
+		data_chart = []
+		unique_data = []
+		'{% for object in context %}'
+		obj = {{object|safe}}
+		labels_chart.push(obj['_id'])
+		data_chart.push(obj['number'])
+		if(!unique_data.contains(obj['number'])){
+			unique_data.push(obj['number'])
+		}
+		'{% endfor%}'
+
+
+		function removeFilters() {
+                    window.location = location.origin + '/accidents';
+                  }
+var ctx = document.getElementById("myAreaChart");
+var myLineChart = new Chart(ctx, {
+  type: 'line',
+  data: {
+    labels: labels_chart,
+    datasets: [{
+      label: "Accidents",
+      lineTension: 0.3,
+      backgroundColor: "rgba(78, 115, 223, 0.05)",
+      borderColor: "rgba(78, 115, 223, 1)",
+      pointRadius: 3,
+      pointBackgroundColor: "rgba(78, 115, 223, 1)",
+      pointBorderColor: "rgba(78, 115, 223, 1)",
+      pointHoverRadius: 3,
+      pointHoverBackgroundColor: "rgba(78, 115, 223, 1)",
+      pointHoverBorderColor: "rgba(78, 115, 223, 1)",
+      pointHitRadius: 10,
+      pointBorderWidth: 2,
+      data: data_chart,
+    }],
+  },
+  options: {
+    maintainAspectRatio: false,
+    layout: {
+      padding: {
+        left: 10,
+        right: 25,
+        top: 25,
+        bottom: 0
+      }
+    },
+    scales: {
+      xAxes: [{
+        time: {
+          unit: 'date'
+        },
+        gridLines: {
+          display: false,
+          drawBorder: false
+        },
+        ticks: {
+          maxTicksLimit: 7
+        }
+      }],
+      yAxes: [{
+        ticks: {
+          maxTicksLimit: unique_data.length,
+          padding: 10,
+          // Include a dollar sign in the ticks
+          callback: function(value, index, values) {
+            return number_format(value);
+          }
+        },
+        gridLines: {
+          color: "rgb(234, 236, 244)",
+          zeroLineColor: "rgb(234, 236, 244)",
+          drawBorder: false,
+          borderDash: [2],
+          zeroLineBorderDash: [2]
+        }
+      }],
+    },
+    legend: {
+      display: false
+    },
+    tooltips: {
+      backgroundColor: "rgb(255,255,255)",
+      bodyFontColor: "#858796",
+      titleMarginBottom: 10,
+      titleFontColor: '#6e707e',
+      titleFontSize: 14,
+      borderColor: '#dddfeb',
+      borderWidth: 1,
+      xPadding: 15,
+      yPadding: 15,
+      displayColors: false,
+      intersect: false,
+      mode: 'index',
+      caretPadding: 10,
+      callbacks: {
+        label: function(tooltipItem, chart) {
+          var datasetLabel = chart.datasets[tooltipItem.datasetIndex].label || '';
+          return datasetLabel +' ' + number_format(tooltipItem.yLabel);
+        }
+      }
+    }
+  }
+});
+console.log(labels_chart)
+
+var data_max = data_chart.reduce(function(a, b) {
+    return Math.max(a, b);
+});
+
+
+var ctx = document.getElementById("myBarChart");
+var myBarChart = new Chart(ctx, {
+  type: 'bar',
+  data: {
+    labels: labels_chart,
+    datasets: [{
+      label: "Accidents",
+      backgroundColor: "#4e73df",
+      hoverBackgroundColor: "#2e59d9",
+      borderColor: "#4e73df",
+      data: data_chart,
+    }],
+  },
+  options: {
+    maintainAspectRatio: false,
+    layout: {
+      padding: {
+        left: 10,
+        right: 25,
+        top: 25,
+        bottom: 0
+      }
+    },
+    scales: {
+      xAxes: [{
+        time: {
+          unit: 'Areas'
+        },
+        gridLines: {
+          display: false,
+          drawBorder: false
+        },
+        ticks: {
+          maxTicksLimit: labels_chart.length
+        },
+        maxBarThickness: 25,
+      }],
+      yAxes: [{
+        ticks: {
+          min: 0,
+          max: data_max,
+          maxTicksLimit: unique_data.length,
+          padding: 10,
+          // Include a dollar sign in the ticks
+          callback: function(value, index, values) {
+            return number_format(value);
+          }
+        },
+        gridLines: {
+          color: "rgb(234, 236, 244)",
+          zeroLineColor: "rgb(234, 236, 244)",
+          drawBorder: false,
+          borderDash: [2],
+          zeroLineBorderDash: [2]
+        }
+      }],
+    },
+    legend: {
+      display: false
+    },
+    tooltips: {
+      titleMarginBottom: 10,
+      titleFontColor: '#6e707e',
+      titleFontSize: 14,
+      backgroundColor: "rgb(255,255,255)",
+      bodyFontColor: "#858796",
+      borderColor: '#dddfeb',
+      borderWidth: 1,
+      xPadding: 15,
+      yPadding: 15,
+      displayColors: false,
+      caretPadding: 10,
+      callbacks: {
+        label: function(tooltipItem, chart) {
+          var datasetLabel = chart.datasets[tooltipItem.datasetIndex].label || '';
+          return datasetLabel + number_format(tooltipItem.yLabel);
+        }
+      }
+    },
+  }
+});
+var ctx = document.getElementById("myAreaChart");
+var myLineChart = new Chart(ctx, {
+  type: 'line',
+  data: {
+    labels: labels_chart,
+    datasets: [{
+      label: "Accidents",
+      lineTension: 0.3,
+      backgroundColor: "rgba(78, 115, 223, 0.05)",
+      borderColor: "rgba(78, 115, 223, 1)",
+      pointRadius: 3,
+      pointBackgroundColor: "rgba(78, 115, 223, 1)",
+      pointBorderColor: "rgba(78, 115, 223, 1)",
+      pointHoverRadius: 3,
+      pointHoverBackgroundColor: "rgba(78, 115, 223, 1)",
+      pointHoverBorderColor: "rgba(78, 115, 223, 1)",
+      pointHitRadius: 10,
+      pointBorderWidth: 2,
+      data: data_chart,
+    }],
+  },
+  options: {
+    maintainAspectRatio: false,
+    layout: {
+      padding: {
+        left: 10,
+        right: 25,
+        top: 25,
+        bottom: 0
+      }
+    },
+    scales: {
+      xAxes: [{
+        time: {
+          unit: 'date'
+        },
+        gridLines: {
+          display: false,
+          drawBorder: false
+        },
+        ticks: {
+          maxTicksLimit: 7
+        }
+      }],
+      yAxes: [{
+        ticks: {
+          maxTicksLimit: unique_data.length,
+          padding: 10,
+          // Include a dollar sign in the ticks
+          callback: function(value, index, values) {
+            return number_format(value);
+          }
+        },
+        gridLines: {
+          color: "rgb(234, 236, 244)",
+          zeroLineColor: "rgb(234, 236, 244)",
+          drawBorder: false,
+          borderDash: [2],
+          zeroLineBorderDash: [2]
+        }
+      }],
+    },
+    legend: {
+      display: false
+    },
+    tooltips: {
+      backgroundColor: "rgb(255,255,255)",
+      bodyFontColor: "#858796",
+      titleMarginBottom: 10,
+      titleFontColor: '#6e707e',
+      titleFontSize: 14,
+      borderColor: '#dddfeb',
+      borderWidth: 1,
+      xPadding: 15,
+      yPadding: 15,
+      displayColors: false,
+      intersect: false,
+      mode: 'index',
+      caretPadding: 10,
+      callbacks: {
+        label: function(tooltipItem, chart) {
+          var datasetLabel = chart.datasets[tooltipItem.datasetIndex].label || '';
+          return datasetLabel +' ' + number_format(tooltipItem.yLabel);
+        }
+      }
+    }
+  }
+});
+console.log(labels_chart)
+
+
+	function init(){
+
+		var form_data;
+		try{
+            form_data = JSON.parse("{{ form_data|escapejs }}");
+        }
+        catch( error ){
+			console.log('Hi')
+        }
+    	if(form_data){
+            for(x in form_data){
+                        try{
+                          elements = document.getElementsByName(x);
+                          switch( elements[0].tagName ){
+                            case "INPUT" : {
+                              switch (elements[0].getAttribute('type')){
+                                case "text" : {
+                                  elements[0].value = form_data[x];
+                                  elements[0].disabled = false;
+                                }
+                                case "date" : {
+                                  elements[0].value = form_data[x];
+                                }
+                                case "radio" : {
+                                  document.getElementById(form_data[x]).checked = true;
+                                }
+                              }
+                            }
+                            case "SELECT" : {
+                              elements[0].value = form_data[x];
+                              elements[0].disabled = false;
+                              elements[0].onchange();
+                            }
+
+                          }
+                        }
+                        catch( error ){
+
+                        }
+                      }
+				}
+				areafilter();
+
+	}
+
+	function filter(){
+		var area = document.getElementById('area').value
+		if(area === ''){
+			for( var i = 0;i < times.length; i++){
+				times[i].disabled = true;
+				times[i].checked = false;
+			}
+			barchart.style.display = 'block';
+			areachart.style.display = 'none';
+		}
+	}
+	function areafilter(){
+
+		var area = document.getElementById('area').value
+		var times = document.accidents_filter.time_filter
+		var barchart = document.getElementById('bar_chart')
+		var areachart = document.getElementById('area_chart')
+		console.log(area)
+		if(area !== 'All'){
+			for( var i = 0;i < times.length; i++){
+				times[i].disabled = false;
+			}
+			barchart.style.display = 'none';
+			areachart.style.display = 'block';
+
+		}
+		else{
+			for( var i = 0;i < times.length; i++){
+				times[i].disabled = true;
+				times[i].checked = false;
+			}
+			barchart.style.display = 'block';
+			areachart.style.display = 'none';
+		}
+
+	}
+
+	function heatmap(latlngs){
+	     document.getElementById('modal').style.display = "block";
+
+		var map = L.map('map-canvas', {doubleClickZoom: false})
+		.setView([
+		18.519400,
+		73.853233],
+			12);
+
+		L.tileLayer('http://{s}.tile.osm.org/{z}/{x}/{y}.png', {attribution: 'OSM'})
+		.addTo(map);
+
+		var points = [];
+
+		console.log({{latlngs|safe}})
+		'{% for object in latlngs %}'
+				obj = {{object|safe}}
+				p = [];
+				p.push(obj['lat']);
+				p.push(obj['lng']);
+				p.push(0.8);
+				points.push(p);
+
+		'{% endfor%}'
+
+		var heat = L.heatLayer(points, {
+			maxZoom: 10
+		})
+		.addTo(map);
+		console.log('hyi')
+	}
+
+	document.getElementsByClassName("close")[1].onclick = function () {
+          document.getElementById('modal').style.display = "none";
+     }
+    window.onclick = function (event) {
+       if (event.target == modal) {
+          document.getElementById('modal').style.display = "none";
+       }
+    }
+
+
+</script>
+`
+
+
+</body>
+
+</html>

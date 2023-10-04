@@ -1,0 +1,666 @@
+<!DOCTYPE html>
+{% load static %}
+{% load leaflet_tags%}
+<html lang="en">
+
+<head>
+  {% leaflet_js %}
+  {% leaflet_css %}
+  <title>Dashboard</title>
+  <style>
+    input::-webkit-outer-spin-button,
+    input::-webkit-inner-spin-button {
+      -webkit-appearance: none;
+      margin: 0;
+    }
+
+    /* Firefox */
+    input[type=number] {
+      -moz-appearance: textfield;
+    }
+  </style>
+  <link rel="shortcut icon" type="image/png" href="{% static 'img/logo-square.png' %}" />
+
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <meta name="description" content="">
+  <meta name="author" content="">
+
+  <!-- Custom fonts for this template -->
+  <link href="{% static 'vendor/fontawesome-free/css/all.min.css' %}" rel="stylesheet" type="text/css">
+  <link
+    href="https://fonts.googleapis.com/css?family=Nunito:200,200i,300,300i,400,400i,600,600i,700,700i,800,800i,900,900i"
+    rel="stylesheet">
+
+  <!-- Custom styles for this template -->
+  <link href="{% static 'css/sb-admin-2.min.css' %}" rel="stylesheet">
+
+  <!-- Custom styles for this page -->
+  <link href="{% static 'vendor/datatables/dataTables.bootstrap4.min.css' %}" rel="stylesheet">
+
+  <style>
+    ::placeholder {
+      /* Chrome, Firefox, Opera, Safari 10.1+ */
+      color: #C0C0FF;
+      opacity: 1;
+      /* Firefox */
+    }
+  </style>
+
+<body onload="init()">
+
+  <!-- Page Wrapper -->
+  <div id="wrapper">
+
+    <!-- Sidebar -->
+    <ul class="navbar-nav bg-gradient-primary sidebar sidebar-dark accordion" id="accordionSidebar">
+
+      <!-- Sidebar - Brand -->
+      <a class="sidebar-brand d-flex align-items-center justify-content-center" href="index.html">
+        <div class="sidebar-brand-icon rotate-n-15">
+          <!--          <i class="fas fa-laugh-wink"></i>-->
+
+        </div>
+        <img src="{% static 'img/dashboard-logo.png' %}">
+        <div class="sidebar-brand-text mx-3">SpeedCop</div>
+
+      </a>
+
+      <!-- Divider -->
+      <hr class="sidebar-divider my-0">
+
+      <!-- Nav Item - Dashboard -->
+      <li class="nav-item active">
+        <a class="nav-link" href="dashboard">
+          <i class="fas fa-fw fa-tachometer-alt"></i>
+          <span>Dashboard</span></a>
+      </li>
+      <!-- Nav Item - Pages Collapse Menu -->
+      <li class="nav-item">
+        <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapsePages" aria-expanded="true"
+          aria-controls="collapsePages">
+          <i class="fas fa-fw fa-chart-area"></i>
+          <span>Statistics</span>
+        </a>
+        <div id="collapsePages" class="collapse" aria-labelledby="headingPages" data-parent="#accordionSidebar">
+          <div class="bg-white py-2 collapse-inner rounded">
+            <h6 class="collapse-header">Sort by:</h6>
+            <a class="collapse-item" href="accidents">By Accidents</a>
+            <a class="collapse-item" href="violations">By Violations</a>
+
+          </div>
+        </div>
+      </li>
+
+
+      <!-- Divider -->
+      <hr class="sidebar-divider d-none d-md-block">
+
+      <!-- Sidebar Toggler (Sidebar) -->
+      <div class="text-center d-none d-md-inline">
+        <button class="rounded-circle border-0" id="sidebarToggle"></button>
+      </div>
+
+    </ul>
+    <!-- End of Sidebar -->
+
+    <!-- Content Wrapper -->
+    <div id="content-wrapper" class="d-flex flex-column">
+
+      <!-- Main Content -->
+      <div id="content">
+
+        <!-- Topbar -->
+        <nav class="navbar navbar-expand navbar-light bg-white topbar mb-4 static-top shadow">
+
+          <!-- Sidebar Toggle (Topbar) -->
+          <form class="form-inline">
+            <button id="sidebarToggleTop" class="btn btn-link d-md-none rounded-circle mr-3">
+              <i class="fa fa-bars"></i>
+            </button>
+          </form>
+
+          <!-- Topbar Search -->
+          <form class="d-none d-sm-inline-block form-inline mr-auto ml-md-3 my-2 my-md-0 mw-100 navbar-search">
+            <div class="input-group">
+              <!--              <input type="text" class="form-control bg-light border-0 small" placeholder="Search for..." aria-label="Search" aria-describedby="basic-addon2">-->
+              <h1 style="color:black; margin-top:10px" class="h3 mb-2">Dashboard</h1>
+
+            </div>
+          </form>
+
+          <!-- Topbar Navbar -->
+          <ul class="navbar-nav ml-auto">
+
+
+            <div class="topbar-divider d-none d-sm-block"></div>
+
+            <!-- Nav Item - User Information -->
+            <li class="nav-item dropdown no-arrow">
+              <a class="nav-link dropdown-toggle" href="#" id="userDropdown" role="button" data-toggle="dropdown"
+                aria-haspopup="true" aria-expanded="false">
+                <span style="color:black;" class="mr-2 d-none d-lg-inline small">{{ context.username }}</span>
+
+                <svg xmlns="http://www.w3.org/2000/svg" x="0px" y="0px" width="30" height="30" viewBox="0 0 172 172"
+                  style=" fill:#000000;">
+                  <g transform="">
+                    <g fill="none" fill-rule="nonzero" stroke="none" stroke-width="1" stroke-linecap="butt"
+                      stroke-linejoin="miter" stroke-miterlimit="10" stroke-dasharray="" stroke-dashoffset="0"
+                      font-family="none" font-weight="none" font-size="none" text-anchor="none"
+                      style="mix-blend-mode: normal">
+                      <path d="M0,172v-172h172v172z" fill="none"></path>
+                      <path
+                        d="M86,86.86c-0.47496,0 -0.86,-0.38504 -0.86,-0.86v0c0,-0.47496 0.38504,-0.86 0.86,-0.86v0c0.47496,0 0.86,0.38504 0.86,0.86v0c0,0.47496 -0.38504,0.86 -0.86,0.86z"
+                        fill="#cccccc"></path>
+                      <g>
+                        <path
+                          d="M115.64133,142.588v-26.94667h21.43877c-1.49285,16.52909 -16.43208,25.35142 -19.39621,26.94667z"
+                          fill="#c8d1db"></path>
+                        <path
+                          d="M133.96507,118.336c-2.28508,11.25293 -11.30143,18.07582 -15.62907,20.77049v-20.77049h15.62907M139.89333,112.94667h-26.94667v32.336h5.38933c0,0 21.55733,-10.31518 21.55733,-32.336z"
+                          fill="#66798f"></path>
+                        <path
+                          d="M115.64133,99.47333v-26.94667h21.43877c-1.49285,16.52909 -16.43208,25.35142 -19.39621,26.94667z"
+                          fill="#c8d1db"></path>
+                        <path
+                          d="M133.96507,75.22133c-2.28508,11.25293 -11.30143,18.07582 -15.62907,20.77049v-20.77049h15.62907M139.89333,69.832h-26.94667v32.336h5.38933c0,0 21.55733,-10.31518 21.55733,-32.336z"
+                          fill="#66798f"></path>
+                        <path
+                          d="M115.64133,56.35867v-26.94667h21.43877c-1.49285,16.52909 -16.43208,25.35142 -19.39621,26.94667z"
+                          fill="#c8d1db"></path>
+                        <path
+                          d="M133.96507,32.10667c-2.28508,11.25293 -11.30143,18.07582 -15.62907,20.77049v-20.77049h15.62907M139.89333,26.71733h-26.94667v32.336h5.38933c0,0 21.55733,-10.31518 21.55733,-32.336z"
+                          fill="#66798f"></path>
+                        <path
+                          d="M54.3215,142.588c-2.96413,-1.60602 -17.89798,-10.47686 -19.4016,-26.94667h21.43877v26.94667z"
+                          fill="#c8d1db"></path>
+                        <path
+                          d="M53.664,118.336v20.7651c-4.3438,-2.70006 -13.34399,-9.52295 -15.62907,-20.7651h15.62907M59.05333,112.94667h-26.94667c0,22.02082 21.55733,32.336 21.55733,32.336h5.38933v-32.336z"
+                          fill="#66798f"></path>
+                        <path
+                          d="M54.3215,99.47333c-2.96413,-1.60602 -17.89798,-10.47686 -19.4016,-26.94667h21.43877v26.94667z"
+                          fill="#c8d1db"></path>
+                        <path
+                          d="M53.664,75.22133v20.7651c-4.3438,-2.70006 -13.34399,-9.52295 -15.62907,-20.7651h15.62907M59.05333,69.832h-26.94667c0,22.02082 21.55733,32.336 21.55733,32.336h5.38933v-32.336z"
+                          fill="#66798f"></path>
+                        <g>
+                          <path
+                            d="M54.3215,56.35867c-2.96413,-1.60602 -17.89798,-10.47686 -19.4016,-26.94667h21.43877v26.94667z"
+                            fill="#c8d1db"></path>
+                          <path
+                            d="M53.664,32.10667v20.7651c-4.3438,-2.70006 -13.34399,-9.52295 -15.62907,-20.7651h15.62907M59.05333,26.71733h-26.94667c0,22.02082 21.55733,32.336 21.55733,32.336h5.38933v-32.336z"
+                            fill="#66798f"></path>
+                        </g>
+                        <g>
+                          <path
+                            d="M50.96933,158.756v-126.64933c0,-4.45698 3.62702,-8.084 8.084,-8.084h5.10909l0.80301,-1.1102c4.3438,-5.9606 12.40086,-9.66846 21.03457,-9.66846c8.63371,0 16.69077,3.70786 21.02918,9.66846l0.8084,1.1102h5.10909c4.45698,0 8.084,3.62702 8.084,8.084v126.64933z"
+                            fill="#c8d1db"></path>
+                          <path
+                            d="M86,15.93867c7.78759,0 15.00929,3.2821 18.85189,8.55826l1.61141,2.22041h2.74317h3.7402c2.96952,0 5.38933,2.41981 5.38933,5.38933v123.95467h-64.672v-123.95467c0,-2.96952 2.41981,-5.38933 5.38933,-5.38933h3.7402h2.74317l1.6168,-2.22041c3.83721,-5.27616 11.05891,-8.55826 18.8465,-8.55826M86,10.54933c-9.94871,0 -18.53931,4.35997 -23.20647,10.77867h-3.7402c-5.95521,0 -10.77867,4.82345 -10.77867,10.77867v129.344h75.45067v-129.344c0,-5.95521 -4.82345,-10.77867 -10.77867,-10.77867h-3.7402c-4.66716,-6.4187 -13.25776,-10.77867 -23.20647,-10.77867z"
+                            fill="#66798f"></path>
+                        </g>
+                        <g>
+                          <path
+                            d="M86,29.412c-7.44112,0 -13.47333,6.03222 -13.47333,13.47333c0,7.44112 6.03222,13.47333 13.47333,13.47333c7.44112,0 13.47333,-6.03222 13.47333,-13.47333c0,-7.44112 -6.03222,-13.47333 -13.47333,-13.47333z"
+                            fill="#f78f8f"></path>
+                          <path
+                            d="M86,32.10667c5.94443,0 10.77867,4.83423 10.77867,10.77867c0,5.94443 -4.83423,10.77867 -10.77867,10.77867c-5.94443,0 -10.77867,-4.83423 -10.77867,-10.77867c0,-5.94443 4.83423,-10.77867 10.77867,-10.77867M86,26.71733c-8.93013,0 -16.168,7.23787 -16.168,16.168c0,8.93013 7.23787,16.168 16.168,16.168c8.93013,0 16.168,-7.23787 16.168,-16.168c0,-8.93013 -7.23787,-16.168 -16.168,-16.168z"
+                            fill="#c74343"></path>
+                        </g>
+                        <g>
+                          <path
+                            d="M86,72.52667c-7.44112,0 -13.47333,6.03222 -13.47333,13.47333c0,7.44112 6.03222,13.47333 13.47333,13.47333c7.44112,0 13.47333,-6.03222 13.47333,-13.47333c0,-7.44112 -6.03222,-13.47333 -13.47333,-13.47333z"
+                            fill="#f5ce85"></path>
+                          <path
+                            d="M86,75.22133c5.94443,0 10.77867,4.83423 10.77867,10.77867c0,5.94443 -4.83423,10.77867 -10.77867,10.77867c-5.94443,0 -10.77867,-4.83423 -10.77867,-10.77867c0,-5.94443 4.83423,-10.77867 10.77867,-10.77867M86,69.832c-8.93013,0 -16.168,7.23787 -16.168,16.168c0,8.93013 7.23787,16.168 16.168,16.168c8.93013,0 16.168,-7.23787 16.168,-16.168c0,-8.93013 -7.23787,-16.168 -16.168,-16.168z"
+                            fill="#967a44"></path>
+                        </g>
+                        <g>
+                          <path
+                            d="M86,115.64133c-7.44112,0 -13.47333,6.03222 -13.47333,13.47333c0,7.44112 6.03222,13.47333 13.47333,13.47333c7.44112,0 13.47333,-6.03222 13.47333,-13.47333c0,-7.44112 -6.03222,-13.47333 -13.47333,-13.47333z"
+                            fill="#bae0bd"></path>
+                          <path
+                            d="M86,118.336c5.94443,0 10.77867,4.83423 10.77867,10.77867c0,5.94443 -4.83423,10.77867 -10.77867,10.77867c-5.94443,0 -10.77867,-4.83423 -10.77867,-10.77867c0,-5.94443 4.83423,-10.77867 10.77867,-10.77867M86,112.94667c-8.93013,0 -16.168,7.23787 -16.168,16.168c0,8.93013 7.23787,16.168 16.168,16.168c8.93013,0 16.168,-7.23787 16.168,-16.168c0,-8.93013 -7.23787,-16.168 -16.168,-16.168z"
+                            fill="#5e9c76"></path>
+                        </g>
+                      </g>
+                    </g>
+                  </g>
+                </svg>
+              </a>
+              <!-- Dropdown - User Information -->
+              <div class="dropdown-menu dropdown-menu-right shadow animated--grow-in" aria-labelledby="userDropdown">
+                <a onclick="logout()" class="dropdown-item" href="#" data-toggle="modal" data-target="#logoutModal">
+                  <i style="color:black;" class="fas fa-sign-out-alt fa-sm fa-fw mr-2"></i>
+                  Logout
+                </a>
+                <a href="{% url 'frontend:change-password' %}" class="dropdown-item">
+                  <i style="color:black;" class="fas fa-sign-out-alt fa-sm fa-fw mr-2"></i>
+                  Change Password
+                </a>
+              </div>
+            </li>
+
+          </ul>
+
+        </nav>
+
+        <div class="container-fluid">
+          <div class="limiter">
+            <div class="container-table100">
+              <div class="wrap-table100">
+                <div class="table100 ver1 m-b-110">
+                  <form method="POST" enctype="multipart/form-data">
+                    {% csrf_token %}
+                    <div style="color:black;" class="dropdown mb-4">
+                      Timestamp:&nbsp;&nbsp;
+                      <input class="btn btn-primary" type="date" id="timestamp" name='timestamp'>
+                      <br><br>
+                      Vehicle Details:&nbsp;&nbsp;
+                      <!--                      Select required state-->
+                      <select style="width: 200px" class="btn btn-primary dropdown-toggle" id='state' name='state'
+                        onchange=stateSelected()>
+                        <option value="none" selected disabled hidden>Select a State</option>
+                        {% for state in States %}
+                        state.name
+                        <option value={{ state.code }}>{{ state.name }}</option>
+                        {% endfor  %}
+                      </select>
+                      <!--                      Put the RTO codes down according to the states here dynamically-->
+                      <select style="width: 300px" class="btn btn-primary dropdown-toggle" id='rto' name='rto' disabled
+                        onchange='citySelected()'>
+                        <option value="none" selected disabled hidden>Select a RTO</option>
+                      </select>
+
+                      <input style="width: 100px" class="btn btn-primary" id="code" type="text" name="code"
+                        placeholder="e.g. BH" disabled onchange="codeEmptied()">
+                      <input style="width: 150px" class="btn btn-primary" id="vehicle_number" type="text" name="number"
+                        placeholder="e.g. 2475" disabled>
+                      <!--                            <input type="number" name="vehicle_number" max="9999" placeholder="e.g. 2475">-->
+                      <br><br>
+                      Violation Filter:&nbsp;&nbsp;
+                      <input type="radio" id="Recommended" name="violation_filter" value="Recommended">&nbsp;Violation of recommended
+                      speed&nbsp;&nbsp;
+                      <input type="radio" id="Limit" name="violation_filter" value="Limit">&nbsp;Violation of speed
+                      limit&nbsp;&nbsp;
+                      <br><br>
+                      Status Filter:&nbsp;&nbsp;
+                      <input type="radio" id="Paid" name="status_filter" value="Paid">&nbsp;Paid&nbsp;&nbsp;
+                      <input type="radio" id="Unpaid" name="status_filter" value="Unpaid">&nbsp;Unpaid&nbsp;&nbsp;
+                      <br><br>
+                      Tolerance:&nbsp;&nbsp;
+                      <input style="width: 100px" class="btn btn-primary" type="number" min="0" max="100" name="Above"
+                        id="Above" placeholder="Above">
+                      <input style="width: 100px" class="btn btn-primary" type="number" min="0" max="100" name="Below"
+                        Below" placeholder="Below">
+                    </div>
+
+                    <center>
+                      <button href="#" class="btn btn-info btn-icon-split" type="submit">
+                        <span class="icon text-white-50">
+                          <i class="fas fa-flag"></i>
+                        </span>
+                        <p style="margin-left: 8px;margin-right: 8px;margin-top: 4px;margin-bottom: 4px;">
+                          Apply Filters
+                        </p>
+                      </button>
+                      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                      <button type="button" onclick="removeFilters()" class="btn btn-danger btn-icon-split">
+                        <span class="icon text-white-50">
+                          <i class="fas fa-trash"></i>
+                        </span>
+                        <p style="margin-left: 8px;margin-right: 8px;margin-top: 4px;margin-bottom: 4px;">
+                          Remove Filters
+                        </p>
+                      </button>
+                      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                      <button href="#" class="btn btn-success btn-icon-split" name="pdf" type="submit">
+                        <span class="icon text-white-50">
+                          <i class="fas fa-check"></i>
+                        </span>
+                        <p style="margin-left: 8px;margin-right: 8px;margin-top: 4px;margin-bottom: 4px;">
+                          Generate Report
+                        </p>
+                      </button>
+                    </center>
+                    <br>
+                    <div class="my-2"></div>
+                  </form>
+                  <!-- DataTales Example -->
+                  <div style="color:black;" class="card shadow mb-4">
+                    <div class="card-header py-3">
+                      <center>
+                        <h5 class="m-0 font-weight-bold text-primary">Violations Details</h5>
+                      </center>
+                    </div>
+                    <div class="card-body">
+                      <div class="table-responsive">
+                        <table style="color:black;" class="table table-bordered" id="dataTable" width="100%"
+                          cellspacing="0">
+                          <thead>
+                            <tr>
+                              <th class="column100 column1" data-column="column1"></th>
+                              <th class="column100 column2" data-column="column2">Timestamp</th>
+                              <th class="column100 column3" data-column="column3">Registration Number</th>
+                              <th class="column100 column4" data-column="column4">Name</th>
+                              <th class="column100 column5" data-column="column5">Speed</th>
+                              <th class="column100 column6" data-column="column6">Recommended Speed</th>
+                              <th class="column100 column7" data-column="column7">Speed Limit</th>
+                              <th class="column100 column8" data-column="column8">Location</th>
+                              <th class="column100 column9" data-column="column9">Status</th>
+                              <th class="column100 column10" data-column="column10"></th>
+                            </tr>
+                          </thead>
+                          <tbody>
+                            {% for object in context.violations %}
+                            <tr class="row100">
+                              <td class="column100 column1" data-column="column1">
+                                {% if object.speed|add:"0" > object.speedlimit|add:"0" %}
+                                <svg xmlns="http://www.w3.org/2000/svg" x="0px" y="0px" width="48" height="48"
+                                  viewBox="0 0 172 172" style=" fill:#000000;">
+                                  <defs>
+                                    <linearGradient x1="86" y1="1916.08" x2="86" y2="1998.64"
+                                      gradientUnits="userSpaceOnUse" id="color-1_zQ1yf8Peqsvz_gr1">
+                                      <stop offset="0" stop-color="#ffb882"></stop>
+                                      <stop offset="1" stop-color="#e56f14"></stop>
+                                    </linearGradient>
+                                    <radialGradient cx="86" cy="1957.36" r="41.28" gradientUnits="userSpaceOnUse"
+                                      id="color-2_zQ1yf8Peqsvz_gr2">
+                                      <stop offset="0" stop-color="#ffb175" stop-opacity="0"></stop>
+                                      <stop offset="0.392" stop-color="#feb074" stop-opacity="0.009"></stop>
+                                      <stop offset="0.533" stop-color="#fdad70" stop-opacity="0.044"></stop>
+                                      <stop offset="0.633" stop-color="#f9a86a" stop-opacity="0.103"></stop>
+                                      <stop offset="0.715" stop-color="#f4a160" stop-opacity="0.188"></stop>
+                                      <stop offset="0.784" stop-color="#ee9754" stop-opacity="0.299"></stop>
+                                      <stop offset="0.846" stop-color="#e78b45" stop-opacity="0.435"></stop>
+                                      <stop offset="0.902" stop-color="#dd7d33" stop-opacity="0.598"></stop>
+                                      <stop offset="0.952" stop-color="#d36d1e" stop-opacity="0.781"></stop>
+                                      <stop offset="0.997" stop-color="#c85b07" stop-opacity="0.987"></stop>
+                                      <stop offset="1" stop-color="#c75a06"></stop>
+                                    </radialGradient>
+                                  </defs>
+                                  <g fill="none" fill-rule="nonzero" stroke="none" stroke-width="1"
+                                    stroke-linecap="butt" stroke-linejoin="miter" stroke-miterlimit="10"
+                                    stroke-dasharray="" stroke-dashoffset="0" font-family="none" font-weight="none"
+                                    font-size="none" text-anchor="none" style="mix-blend-mode: normal">
+                                    <path d="M0,172v-172h172v172z" fill="none"></path>
+                                    <path
+                                      d="M86,86.86c-0.47496,0 -0.86,-0.38504 -0.86,-0.86v0c0,-0.47496 0.38504,-0.86 0.86,-0.86v0c0.47496,0 0.86,0.38504 0.86,0.86v0c0,0.47496 -0.38504,0.86 -0.86,0.86z"
+                                      fill="#cccccc"></path>
+                                    <g>
+                                      <circle cx="37.5" cy="37.5" transform="scale(2.29333,2.29333)" r="18"
+                                        fill="url(#color-1_zQ1yf8Peqsvz_gr1)"></circle>
+                                      <circle cx="37.5" cy="37.5" transform="scale(2.29333,2.29333)" r="18"
+                                        fill="url(#color-2_zQ1yf8Peqsvz_gr2)"></circle>
+                                    </g>
+                                  </g>
+                                </svg>
+                                {% endif %}
+                                {% if object.speed|add:"0" > object.recommendedspeedlimit|add:"0" %}
+                                <svg xmlns="http://www.w3.org/2000/svg" x="0px" y="0px" width="48" height="48"
+                                  viewBox="0 0 172 172" style=" fill:#000000;">
+                                  <defs>
+                                    <linearGradient x1="86" y1="1916.08" x2="86" y2="1998.64"
+                                      gradientUnits="userSpaceOnUse" id="color-1_zQ1yf8Peqsvz_gr1">
+                                      <stop offset="0" stop-color="#ffb882"></stop>
+                                      <stop offset="1" stop-color="#e56f14"></stop>
+                                    </linearGradient>
+                                    <radialGradient cx="86" cy="1957.36" r="41.28" gradientUnits="userSpaceOnUse"
+                                      id="color-2_zQ1yf8Peqsvz_gr2">
+                                      <stop offset="0" stop-color="#ffb175" stop-opacity="0"></stop>
+                                      <stop offset="0.392" stop-color="#feb074" stop-opacity="0.009"></stop>
+                                      <stop offset="0.533" stop-color="#fdad70" stop-opacity="0.044"></stop>
+                                      <stop offset="0.633" stop-color="#f9a86a" stop-opacity="0.103"></stop>
+                                      <stop offset="0.715" stop-color="#f4a160" stop-opacity="0.188"></stop>
+                                      <stop offset="0.784" stop-color="#ee9754" stop-opacity="0.299"></stop>
+                                      <stop offset="0.846" stop-color="#e78b45" stop-opacity="0.435"></stop>
+                                      <stop offset="0.902" stop-color="#dd7d33" stop-opacity="0.598"></stop>
+                                      <stop offset="0.952" stop-color="#d36d1e" stop-opacity="0.781"></stop>
+                                      <stop offset="0.997" stop-color="#c85b07" stop-opacity="0.987"></stop>
+                                      <stop offset="1" stop-color="#c75a06"></stop>
+                                    </radialGradient>
+                                  </defs>
+                                  <g fill="none" fill-rule="nonzero" stroke="none" stroke-width="1"
+                                    stroke-linecap="butt" stroke-linejoin="miter" stroke-miterlimit="10"
+                                    stroke-dasharray="" stroke-dashoffset="0" font-family="none" font-weight="none"
+                                    font-size="none" text-anchor="none" style="mix-blend-mode: normal">
+                                    <path d="M0,172v-172h172v172z" fill="none"></path>
+                                    <path
+                                      d="M86,86.86c-0.47496,0 -0.86,-0.38504 -0.86,-0.86v0c0,-0.47496 0.38504,-0.86 0.86,-0.86v0c0.47496,0 0.86,0.38504 0.86,0.86v0c0,0.47496 -0.38504,0.86 -0.86,0.86z"
+                                      fill="#cccccc"></path>
+                                    <g>
+                                      <circle cx="37.5" cy="37.5" transform="scale(2.29333,2.29333)" r="18"
+                                        fill="url(#color-1_zQ1yf8Peqsvz_gr1)"></circle>
+                                      <circle cx="37.5" cy="37.5" transform="scale(2.29333,2.29333)" r="18"
+                                        fill="url(#color-2_zQ1yf8Peqsvz_gr2)"></circle>
+                                    </g>
+                                  </g>
+                                </svg>
+                                {% endif %}
+                              </td>
+                              <td class="column100 column2" data-column="column2">{{ object.timestamp}}</td>
+                              <td class="column100 column3" data-column="column3">{{ object.vehicle_no }}</td>
+                              <td class="column100 column4" data-column="column4">{{ object.name }}</td>
+                              <td class="column100 column5" data-column="column5">{{ object.speed }}</td>
+                              <td class="column100 column6" data-column="column6"></td> {{ object.recommendedspeed }}
+                              </td>
+                              <td class="column100 column7" data-column="column7">{{ object.speedlimit }}</td>
+                              <td class="column100 column8" data-column="column8"><a href="#"
+                                  onclick="mapPopup('{{ object.lat }}', '{{ object.lng }}')">{{ object.Area }},
+                                  {{object.City}}</a>
+                              </td>
+                              <td class="column100 column9" data-column="column9">
+                                {% if object.Paid %}
+                                Paid
+                                {% else %}
+                                Not Paid
+                                {% endif %}
+                              </td>
+                              <td class="column100 column10" data-column="column10">
+                                {% if not object.Paid %}
+                                <button href="#" class="btn btn-info btn-icon-info" onclick="emailNotify(this,'{{ object.email }}')" id="email-notification">
+                                  <span class="icon text-white-50">
+                                    <i id="email-notification-icon" class="fas fa-info-circle"></i>
+                                  </span>
+                                  <p style="margin-left: 8px;margin-right: 8px;margin-top: 4px;margin-bottom: 4px;">
+                                    Notify
+                                  </p>
+                                </button>
+                                {% endif %}
+                              </td>
+                            </tr>
+                            {% endfor %}
+                          </tbody>
+                        </table>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <div id="modal" class="modal">
+                  <div class="modal-dialog" style="height: 45%;">
+                    <div class="modal-content" style="height: 100%;">
+                      <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+                        <h4 class="modal-title">Map</h4>
+                      </div>
+                      <div class="modal-body" style="height:100%;">
+                        {% leaflet_map "map-canvas" %}
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <!-- Bootstrap core JavaScript-->
+                <script src="{% static 'vendor/jquery/jquery.min.js' %}"></script>
+                <script src="{% static 'vendor/bootstrap/js/bootstrap.bundle.min.js' %}"></script>
+
+                <!-- Core plugin JavaScript-->
+                <script src="{% static 'vendor/jquery-easing/jquery.easing.min.js' %}"></script>
+                <!-- Custom scripts for all pages-->
+                <script src="{% static 'js/sb-admin-2.min.js' %}"></script>
+
+                <!-- Page level plugins -->
+                <script src="{% static 'vendor/datatables/jquery.dataTables.min.js' %}"></script>
+                <script src="{% static 'vendor/datatables/dataTables.bootstrap4.min.js' %}"></script>
+
+                <!-- Page level custom scripts -->
+                <script src="{% static 'js/demo/datatables-demo.js' %}"></script>
+                <script>
+                  var map, marker;
+
+                  function init() {
+                    map = L.map('map-canvas', {
+                      center: [51.505, -0.09],
+                      zoom: 13
+                    });
+                    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                      attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+                    }).addTo(map);
+                    var form_data;
+                    try{
+                      form_data = JSON.parse("{{ form_data|escapejs }}");
+                    }
+                    catch( error ){
+
+                    }
+                    if(form_data){
+                      for(x in form_data){
+                        try{
+                          elements = document.getElementsByName(x);
+                          switch( elements[0].tagName ){
+                            case "INPUT" : {
+                              switch (elements[0].getAttribute('type')){
+                                case "text" : {
+                                  elements[0].value = form_data[x];
+                                  elements[0].disabled = false;
+                                }
+                                case "date" : {
+                                  elements[0].value = form_data[x];
+                                }
+                                case "radio" : {
+                                  document.getElementById(form_data[x]).checked = true;
+                                }
+                              }
+                            }
+                            case "SELECT" : {
+                              elements[0].value = form_data[x];
+                              elements[0].disabled = false;
+                              elements[0].onchange();
+                            }
+
+                          }
+                        }
+                        catch( error ){
+
+                        }
+                      }
+                    }
+                  }
+                  function logout() {
+                    document.cookie = 'token=; Path=/; Expires=Thu, 01 Jan 1970 00:00:01 GMT;';
+                    window.location = location.origin + '/login'
+                  }
+                  function mapPopup(lat, lng) {
+                    document.getElementById('modal').style.display = "block";
+                    // setTimeout(function () {
+                    // 	map.invalidateSize();
+                    // }, 10);
+                    marker = L.marker([lat, lng])
+                    map.setView([lat, lng], 20);
+                    marker.addTo(map)
+                    map.invalidateSize();
+                  }
+
+                  document.getElementsByClassName("close")[0].onclick = function () {
+                    map.removeLayer(marker)
+                    document.getElementById('modal').style.display = "none";
+                  }
+                  window.onclick = function (event) {
+                    if (event.target == modal) {
+                      map.removeLayer(marker)
+                      document.getElementById('modal').style.display = "none";
+                    }
+                  }
+
+                  function stateSelected() {
+                    for (i = document.getElementById('rto').options.length - 1; i >= 1; i--) {
+                      document.getElementById('rto').options[i] = null;
+                    }
+                    if (document.getElementById('state').value == 'none') {
+                      document.getElementById('rto').disabled = true;
+                    }
+                    else {
+                      state = document.getElementById('state').value;
+                      rto = document.getElementById('rto');
+                      rto.disabled = false;
+                      document.getElementById('code').disabled = true;
+                      document.getElementById('vehicle_number').disabled = true;
+                      var http = new XMLHttpRequest();
+                      http.open('GET', location.origin + '/api/city-by-state/?state-code=' + state, true)
+                      http.onreadystatechange = function () {
+                        if (http.readyState == 4 && http.status == 200) {
+                          cities = JSON.parse(http.response);
+                          for (x in cities) {
+                            var option = document.createElement('option');
+                            option.text = cities[x]['fields']['name'];
+                            option.value = cities[x]['pk'];
+                            rto.add(option);
+                          }
+                        }
+                      }
+                      http.send();
+                    }
+                  }
+                  function citySelected() {
+                    document.getElementById('code').disabled = false
+                  }
+                  function codeEmptied() {
+                    if (document.getElementById('code').value == '')
+                      document.getElementById('vehicle_number').disabled = true
+                    else
+                      document.getElementById('vehicle_number').disabled = false
+                  }
+                  function removeFilters() {
+                    window.location = location.origin + '/dashboard';
+                  }
+                  function getCookie(cname) {
+                    var name = cname + "=";
+                    var decodedCookie = decodeURIComponent(document.cookie);
+                    var ca = decodedCookie.split(';');
+                    for (var i = 0; i < ca.length; i++) {
+                      var c = ca[i];
+                      while (c.charAt(0) == ' ') {
+                        c = c.substring(1);
+                      }
+                      if (c.indexOf(name) == 0) {
+                        return c.substring(name.length, c.length);
+                      }
+                    }
+                    return "";
+                  }
+                  function emailNotify(invoker, email) {
+                    token = getCookie("token")
+                    if (token != "") {
+                      var http = new XMLHttpRequest()
+                      http.open('POST', location.origin + '/api/notify', true)
+                      http.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
+                      http.setRequestHeader('Authorization',"Token " + token )
+                      http.onreadystatechange = function () {
+                        if (http.readyState == 4 && http.status == 200) {
+                          invoker.childNodes[1].childNodes[1].className = "fa fa-check"
+                          invoker.className = "btn btn-success btn-split"
+                          invoker.childNodes[3].innerHTML = "Notified"
+                          invoker.disabled = true
+                        }
+                      }
+                      http.send("email="+email)
+                    }
+                    else {
+                      window.location = location.origin + '/login'
+                    }
+                  }
+                </script>
+
+</body>
+
+</html>

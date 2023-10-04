@@ -1,0 +1,12 @@
+{
+<<<<<<< Updated upstream
+<<<<<<< Updated upstream
+    "python.pythonPath": "/usr/bin/python3",
+=======
+    "python.pythonPath": "speedcopenv/bin/python",
+>>>>>>> Stashed changes
+    "git.ignoreLimitWarning": true
+=======
+    "python.pythonPath": "speedcopenv/bin/python"
+>>>>>>> Stashed changes
+}

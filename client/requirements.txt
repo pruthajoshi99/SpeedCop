@@ -1,0 +1,7 @@
+h5py==2.7.0
+Keras==1.2.2
+matplotlib==3.3.0
+opencv-python==4.3.0.36
+requests==2.24.0
+simpleaudio==1.0.4
+tensorflow==1.15.0
