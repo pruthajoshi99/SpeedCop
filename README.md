@@ -39,19 +39,20 @@ This will help in reducing the fatalities caused by over-speeding.
 1.Main Dashboard Page
 </br>
 </br>
-<img width="902" alt="Screen Shot 2023-10-09 at 11 34 20 AM" src="https://github.com/pruthajoshi99/SpeedCop/assets/122393647/7a5f31a1-69c6-468a-89e1-bec672058c74">
+<img width="945" alt="Screen Shot 2023-10-15 at 10 42 04 AM" src="https://github.com/pruthajoshi99/SpeedCop/assets/122393647/42a132fd-e183-4ba8-92ca-e5237c62b267">
 </br>
 </br>
 2.Report Page
 </br>
 </br>
-<img width="898" alt="Screen Shot 2023-10-09 at 11 34 39 AM" src="https://github.com/pruthajoshi99/SpeedCop/assets/122393647/dadd49f8-dfda-49a5-b0e1-dbf814d95d54">
+<img width="896" alt="Screen Shot 2023-10-15 at 10 42 25 AM" src="https://github.com/pruthajoshi99/SpeedCop/assets/122393647/3318b16c-e40a-4026-ac16-a1c1e9320596">
 </br>
 </br>
 3. PDF Page
 </br>
 </br>
-<img width="616" alt="Screen Shot 2023-10-09 at 11 34 52 AM" src="https://github.com/pruthajoshi99/SpeedCop/assets/122393647/12f93e07-5498-4023-8e2c-ad1f5a6162eb">
+<img width="606" alt="Screen Shot 2023-10-15 at 10 42 34 AM" src="https://github.com/pruthajoshi99/SpeedCop/assets/122393647/76b1bf31-76fb-4a16-be2f-5bd7e6176c86">
+
 
 
 
